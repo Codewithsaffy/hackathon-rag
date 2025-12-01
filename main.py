@@ -1,12 +1,27 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
+from fastapi.middleware.cors import CORSMiddleware
 from agents import Agent, Runner, set_tracing_disabled
 from agents_instructions import main_agent_instruction
 from tools import read_document
 from typing import Dict, Any
 from models import model
 import uvicorn
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 app = FastAPI()
+
+# Add CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins for now
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 set_tracing_disabled(True)
 
@@ -38,6 +53,7 @@ async def query(request: Dict[str, Any]):
     """
     try:
         user_query = request.get("query")
+        logger.info(f"Received query: {user_query}")
         
         if not user_query or not isinstance(user_query, str):
             raise HTTPException(
@@ -55,6 +71,7 @@ async def query(request: Dict[str, Any]):
         }
     
     except Exception as e:
+        logger.error(f"Error processing request: {str(e)}")
         raise HTTPException(
             status_code=500, detail=f"Error processing request: {str(e)}"
         )
