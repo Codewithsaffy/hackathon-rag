@@ -14,17 +14,21 @@ client = genai.Client(api_key=API_KEY)
 def read_document(question: str):
     """Search the book content to answer questions about Human AI, Robotics, and Physical AI topics."""
 
-    response = client.models.generate_content(
-        model="gemini-2.5-flash",
-        contents=f"""Can you tell me about {question}""",
-        config=types.GenerateContentConfig(
-            tools=[
-                types.Tool(
-                    file_search=types.FileSearch(
-                        file_search_store_names=["fileSearchStores/ragfilestore-tw7ieckhbt3j"]
+    try:
+        response = client.models.generate_content(
+            model="gemini-2.5-flash",
+            contents=f"""Can you tell me about {question}""",
+            config=types.GenerateContentConfig(
+                tools=[
+                    types.Tool(
+                        file_search=types.FileSearch(
+                            file_search_store_names=["fileSearchStores/ragfilestore-tw7ieckhbt3j"]
+                        )
                     )
-                )
-            ]
+                ]
+            )
         )
-    )
-    return response.text
+        return response.text
+    except Exception as e:
+        print(f"Error in read_document: {str(e)}")
+        return f"Error accessing document: {str(e)}"
