@@ -21,7 +21,7 @@ def read_document(question: str):
             tools=[
                 types.Tool(
                     file_search=types.FileSearch(
-                        file_search_store_names=["fileSearchStores/ragfilestore-tw7ieckhbt3j"]
+                        file_search_store_names=["fileSearchStores/ragfilestore-tijb93eext7c"]
                     )
                 )
             ]
